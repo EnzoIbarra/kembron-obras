@@ -122,8 +122,14 @@ model Item {
   unitPrice            Decimal    @db.Decimal(12, 2)
   theoreticalAmount    Decimal    @db.Decimal(12, 2) // persisted, frozen at creation
   origin               ItemOrigin @default(PRESUPUESTO_INICIAL)
-  // Set only when origin = ADICIONAL: points to the AdicionalDeductivo that created this item.
-  // This creating change-order is excluded from the real-budget sum to avoid double-counting.
+  /// Set only when origin = ADICIONAL. Points to the AdicionalDeductivo record that caused
+  /// this item to be created (the change-order document).
+  /// REAL-BUDGET RULE: when an Item has origin = ADICIONAL and a non-null createdByAdicionalId,
+  /// the AdicionalDeductivo referenced here MUST NOT be included when summing additions for this
+  /// item's real budget. Formula: real = theoreticalAmount + Σ(additions) − Σ(deductions),
+  /// where the sum excludes the AdicionalDeductivo whose id equals this field. The item's own
+  /// theoreticalAmount already fully represents the budget value of that change order. Including
+  /// it in the sum as well would double-count that amount.
   createdByAdicionalId String?
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
@@ -156,6 +162,13 @@ model AdicionalDeductivo {
 
   item         Item    @relation("ChangeOrderTargetsItem", fields: [itemId], references: [id], onDelete: Restrict)
   usuario      Usuario @relation(fields: [userId], references: [id])
+  /// Items whose existence was triggered by this addition (only populated when type = ADICIONAL
+  /// and the addition created a brand-new item rather than adjusting an existing one).
+  /// REAL-BUDGET RULE: if any Item in this list has createdByAdicionalId = this record's id,
+  /// this AdicionalDeductivo MUST NOT be summed into that item's additions when computing its
+  /// real budget. The item's theoreticalAmount already captures the full value of this change
+  /// order. Only subsequent additions/deductions applied to that item after its creation should
+  /// enter the real-budget formula.
   createdItems Item[]  @relation("ItemCreatedByAdicional")
 
   @@index([itemId])
