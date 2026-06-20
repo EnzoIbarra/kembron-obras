@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, ChangeOrderType, ItemOrigin } from '@prisma/client';
 import { prisma } from '@/shared/lib/prisma';
 import { computeItemRealBudget, computeItemExecuted, sumBudgetColumns } from '../utils/budgetCalculations';
 import type { PresupuestoData } from '../types';
@@ -33,6 +33,105 @@ export async function createItem(
       unitPrice: price,
       theoreticalAmount,
     },
+  });
+}
+
+export async function createDeduction(
+  userId: string,
+  data: { itemId: string; name: string; amount: string; description?: string }
+) {
+  return prisma.adicionalDeductivo.create({
+    data: {
+      itemId: data.itemId,
+      type: ChangeOrderType.DEDUCTIVO,
+      name: data.name,
+      amount: new Prisma.Decimal(data.amount),
+      description: data.description,
+      userId,
+    },
+  });
+}
+
+export async function createAdditionOnExistingItem(
+  userId: string,
+  data: { itemId: string; name: string; amount: string; description?: string }
+) {
+  return prisma.adicionalDeductivo.create({
+    data: {
+      itemId: data.itemId,
+      type: ChangeOrderType.ADICIONAL,
+      name: data.name,
+      amount: new Prisma.Decimal(data.amount),
+      description: data.description,
+      userId,
+    },
+  });
+}
+
+export async function createAdditionWithNewItem(
+  userId: string,
+  data: {
+    tituloId: string;
+    name: string;
+    itemName: string;
+    quantity: string;
+    unit: string;
+    unitPrice: string;
+    description?: string;
+  }
+) {
+  const qty = new Prisma.Decimal(data.quantity);
+  const price = new Prisma.Decimal(data.unitPrice);
+  const theoreticalAmount = qty.times(price);
+
+  return prisma.$transaction(async (tx) => {
+    const item = await tx.item.create({
+      data: {
+        tituloId: data.tituloId,
+        name: data.itemName,
+        quantity: qty,
+        unit: data.unit,
+        unitPrice: price,
+        theoreticalAmount,
+        origin: ItemOrigin.ADICIONAL,
+        createdByAdicionalId: null,
+      },
+    });
+
+    const adicional = await tx.adicionalDeductivo.create({
+      data: {
+        itemId: item.id,
+        type: ChangeOrderType.ADICIONAL,
+        name: data.name,
+        amount: theoreticalAmount,
+        description: data.description,
+        userId,
+      },
+    });
+
+    await tx.item.update({
+      where: { id: item.id },
+      data: { createdByAdicionalId: adicional.id },
+    });
+
+    return { item, adicional };
+  });
+}
+
+export async function listChangeOrders(obraId: string) {
+  return prisma.adicionalDeductivo.findMany({
+    where: { item: { titulo: { obraId } } },
+    include: {
+      item: {
+        select: {
+          id: true,
+          name: true,
+          titulo: { select: { id: true, name: true } },
+        },
+      },
+      usuario: { select: { id: true, username: true } },
+    },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
