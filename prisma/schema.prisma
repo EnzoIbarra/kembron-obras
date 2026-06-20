@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  SUPERVISOR
+}
+
+// Spanish values kept per spec — map directly to UI display strings and business docs.
+enum ObraStatus {
+  EN_EJECUCION
+  FINALIZADA
+  PAUSADA
+}
+
+enum ItemOrigin {
+  PRESUPUESTO_INICIAL
+  ADICIONAL
+}
+
+enum ChangeOrderType {
+  ADICIONAL
+  DEDUCTIVO
+}
+
+enum ExpenseCategory {
+  MANO_DE_OBRA
+  MATERIAL
+  EQUIPO
+  SUBCONTRATO
+  OTROS
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+// Spanish model names kept where the domain term has no clean English equivalent
+// or where a translation would hurt traceability back to the business glossary.
+
+// Usuario: kept in Spanish — consistent with domain glossary; avoids collision
+// with NextAuth's internal "User" type in application code.
+model Usuario {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // bcrypt hash — never plaintext
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignments     AsignacionObraSupervisor[]
+  expenses        Gasto[]
+  progressRecords RegistroAvance[]
+  changeOrders    AdicionalDeductivo[]
+}
+
+// Obra: no concise English equivalent; "construction project/site" is too long.
+model Obra {
+  id                 String     @id @default(cuid())
+  name               String
+  location           String
+  client             String
+  status             ObraStatus
+  active             Boolean    @default(true)
+  startDate          DateTime   @db.Date
+  theoreticalEndDate DateTime   @db.Date
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  titulos     Titulo[]
+  assignments AsignacionObraSupervisor[]
+}
+
+// Join table: supervisor ↔ obra many-to-many assignments.
+model AsignacionObraSupervisor {
+  id        String   @id @default(cuid())
+  userId    String
+  obraId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usuario Usuario @relation(fields: [userId], references: [id], onDelete: Cascade)
+  obra    Obra    @relation(fields: [obraId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, obraId])
+  @@index([userId])
+  @@index([obraId])
+}
+
+// Titulo: budget chapter/stage. "Stage" and "chapter" are both approximate.
+model Titulo {
+  id        String   @id @default(cuid())
+  obraId    String
+  name      String
+  sortOrder Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  obra  Obra   @relation(fields: [obraId], references: [id], onDelete: Cascade)
+  items Item[]
+
+  @@unique([obraId, sortOrder])
+  @@index([obraId])
+}
+
+// Item: executable line item within a Titulo.
+// theoreticalAmount is frozen at creation (quantity × unitPrice) — never recalculated.
+// Real budget and Executed are always derived at query time, never stored.
+model Item {
+  id                   String     @id @default(cuid())
+  tituloId             String
+  name                 String
+  quantity             Decimal    @db.Decimal(12, 3)
+  unit                 String
+  unitPrice            Decimal    @db.Decimal(12, 2)
+  theoreticalAmount    Decimal    @db.Decimal(12, 2) // persisted, frozen at creation
+  origin               ItemOrigin @default(PRESUPUESTO_INICIAL)
+  // Set only when origin = ADICIONAL: points to the AdicionalDeductivo that created this item.
+  // This creating change-order is excluded from the real-budget sum to avoid double-counting.
+  createdByAdicionalId String?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  titulo             Titulo               @relation(fields: [tituloId], references: [id], onDelete: Cascade)
+  createdByAdicional AdicionalDeductivo?  @relation("ItemCreatedByAdicional", fields: [createdByAdicionalId], references: [id], onDelete: SetNull)
+  changeOrders       AdicionalDeductivo[] @relation("ChangeOrderTargetsItem")
+  expenses           Gasto[]
+  weeklySchedule     ProgramacionSemanal[]
+  progressRecords    RegistroAvance[]
+
+  @@index([tituloId])
+  @@index([createdByAdicionalId])
+}
+
+// AdicionalDeductivo: change order (addition or deduction).
+// Always targets a specific Item via itemId.
+// When tipo = ADICIONAL and a new Item is created, that Item's createdByAdicionalId
+// points back here. The creating record is excluded from real-budget sums.
+model AdicionalDeductivo {
+  id          String          @id @default(cuid())
+  itemId      String
+  type        ChangeOrderType
+  name        String
+  amount      Decimal         @db.Decimal(12, 2)
+  description String?
+  userId      String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  item         Item    @relation("ChangeOrderTargetsItem", fields: [itemId], references: [id], onDelete: Restrict)
+  usuario      Usuario @relation(fields: [userId], references: [id])
+  createdItems Item[]  @relation("ItemCreatedByAdicional")
+
+  @@index([itemId])
+  @@index([userId])
+}
+
+// Gasto (expense): always charged against a specific Item — never a Titulo or Obra.
+// Title/obra-level Executed totals are upward aggregations of item expenses.
+model Gasto {
+  id          String          @id @default(cuid())
+  itemId      String
+  userId      String
+  description String
+  category    ExpenseCategory
+  amount      Decimal         @db.Decimal(12, 2)
+  date        DateTime        @db.Date
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  usuario Usuario @relation(fields: [userId], references: [id])
+
+  @@index([itemId])
+  @@index([date])
+}
+
+// ProgramacionSemanal: planned quantity per item per week.
+// weekNumber is 1-based, relative to the obra's startDate.
+// Unique constraint ensures one record per (item, week).
+model ProgramacionSemanal {
+  id              String   @id @default(cuid())
+  itemId          String
+  weekNumber      Int
+  plannedQuantity Decimal  @db.Decimal(12, 3)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, weekNumber])
+  @@index([itemId])
+}
+
+// RegistroAvance: actual logged progress on an item.
+// Additive — each record adds to cumulative progress, never overwrites previous ones.
+model RegistroAvance {
+  id               String   @id @default(cuid())
+  itemId           String
+  userId           String
+  advancedQuantity Decimal  @db.Decimal(12, 3)
+  date             DateTime @db.Date
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  item    Item    @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  usuario Usuario @relation(fields: [userId], references: [id])
+
+  @@index([itemId])
+  @@index([date])
+}
