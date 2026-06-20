@@ -1,4 +1,5 @@
-import type { Obra, ObraStatus } from '@prisma/client';
+import type { Obra } from '@prisma/client';
+import { ObraStatus } from '@prisma/client';
 
 export type ObraWithProgress = Obra & {
   physicalProgress: number;
