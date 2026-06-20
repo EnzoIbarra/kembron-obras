@@ -1,6 +1,9 @@
 'use client';
 
 import * as Tabs from '@radix-ui/react-tabs';
+import { PresupuestoTab } from '@/domains/presupuesto/components/PresupuestoTab';
+
+type Props = { obraId: string };
 
 const TABS = [
   { value: 'resumen', label: 'Resumen' },
@@ -8,11 +11,11 @@ const TABS = [
   { value: 'avance', label: 'Avance' },
 ] as const;
 
-export function ObraDetailTabs() {
+export function ObraDetailTabs({ obraId }: Props) {
   return (
     <Tabs.Root defaultValue="resumen">
       {/* Tab list — scrollable on narrow viewports */}
-      <Tabs.List className="flex overflow-x-auto border-b border-gray-200 gap-0 scrollbar-none">
+      <Tabs.List className="flex overflow-x-auto border-b border-gray-200 scrollbar-none">
         {TABS.map(({ value, label }) => (
           <Tabs.Trigger
             key={value}
@@ -32,7 +35,7 @@ export function ObraDetailTabs() {
       </Tabs.Content>
 
       <Tabs.Content value="presupuesto" className="pt-6">
-        <p className="text-sm text-gray-400">Presupuesto — próximamente</p>
+        <PresupuestoTab obraId={obraId} />
       </Tabs.Content>
 
       <Tabs.Content value="avance" className="pt-6">

@@ -63,7 +63,7 @@ export default async function ObraDetailPage({ params }: { params: Promise<{ id:
       </div>
 
       {/* Tab shell */}
-      <ObraDetailTabs />
+      <ObraDetailTabs obraId={obra.id} />
     </div>
   );
 }
