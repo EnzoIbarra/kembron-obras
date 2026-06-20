@@ -17,11 +17,11 @@ export async function createTitulo(obraId: string, data: { name: string }) {
 
 export async function createItem(
   tituloId: string,
-  data: { name: string; quantity: number; unit: string; unitPrice: number }
+  data: { name: string; quantity: string; unit: string; unitPrice: string }
 ) {
-  // Convert through string to avoid floating-point precision issues before Decimal math
-  const qty = new Prisma.Decimal(data.quantity.toString());
-  const price = new Prisma.Decimal(data.unitPrice.toString());
+  // Raw strings from itemSchema feed Prisma.Decimal directly — no float intermediate.
+  const qty = new Prisma.Decimal(data.quantity);
+  const price = new Prisma.Decimal(data.unitPrice);
   const theoreticalAmount = qty.times(price);
 
   return prisma.item.create({
