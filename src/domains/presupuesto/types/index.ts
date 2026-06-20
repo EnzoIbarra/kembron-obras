@@ -49,3 +49,21 @@ export type PresupuestoDataDto = {
   titulos: TituloRowDto[];
   total: { theoretical: string; real: string; executed: string };
 };
+
+// ── Change order DTO ──────────────────────────────────────────────────────────
+// Reflects what GET /api/obras/[id]/adicionales-deductivos returns after JSON
+// serialization: Decimal → string, Date → ISO string.
+export type ChangeOrderRowDto = {
+  id: string;
+  type: 'ADICIONAL' | 'DEDUCTIVO';
+  name: string;
+  amount: string;
+  description: string | null;
+  createdAt: string;
+  item: {
+    id: string;
+    name: string;
+    titulo: { id: string; name: string };
+  };
+  usuario: { id: string; username: string };
+};
