@@ -39,6 +39,16 @@ export async function updateObra(
   return prisma.obra.update({ where: { id }, data });
 }
 
+export async function getObraById(id: string): Promise<ObraWithProgress | null> {
+  const obra = await prisma.obra.findUnique({ where: { id } });
+  if (!obra) return null;
+  return {
+    ...obra,
+    physicalProgress: 0, // TODO: computed from Items + RegistroAvance (Bloque avance)
+    economicProgress: 0, // TODO: computed from Gastos ÷ Real budget (Bloque presupuesto)
+  };
+}
+
 export async function toggleObraActive(id: string) {
   const obra = await prisma.obra.findUniqueOrThrow({ where: { id } });
   return prisma.obra.update({ where: { id }, data: { active: !obra.active } });
