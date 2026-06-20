@@ -8,6 +8,10 @@ import { ObraStatus } from '@prisma/client';
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+  if (session.user.role !== 'ADMIN') {
+    // Supervisors read obras through GET /api/mis-obras (scoped to assigned obras).
+    return NextResponse.json({ error: 'Acceso restringido a administradores' }, { status: 403 });
+  }
 
   const obras = await listObras();
   return NextResponse.json(obras);
