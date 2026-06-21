@@ -2,8 +2,9 @@
 
 import * as Tabs from '@radix-ui/react-tabs';
 import { PresupuestoTab } from '@/domains/presupuesto/components/PresupuestoTab';
+import { AvanceTab } from '@/domains/avance/components/AvanceTab';
 
-type Props = { obraId: string };
+type Props = { obraId: string; startDate: string; theoreticalEndDate: string };
 
 const TABS = [
   { value: 'resumen', label: 'Resumen' },
@@ -11,7 +12,7 @@ const TABS = [
   { value: 'avance', label: 'Avance' },
 ] as const;
 
-export function ObraDetailTabs({ obraId }: Props) {
+export function ObraDetailTabs({ obraId, startDate, theoreticalEndDate }: Props) {
   return (
     <Tabs.Root defaultValue="resumen">
       {/* Tab list — scrollable on narrow viewports */}
@@ -39,7 +40,7 @@ export function ObraDetailTabs({ obraId }: Props) {
       </Tabs.Content>
 
       <Tabs.Content value="avance" className="pt-6">
-        <p className="text-sm text-gray-400">Avance — próximamente</p>
+        <AvanceTab obraId={obraId} startDate={startDate} theoreticalEndDate={theoreticalEndDate} />
       </Tabs.Content>
     </Tabs.Root>
   );

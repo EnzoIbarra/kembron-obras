@@ -17,7 +17,11 @@ export default async function ObraDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="flex flex-col gap-6">
       <ObraDetailHeader obra={obra} />
-      <ObraDetailTabs obraId={obra.id} />
+      <ObraDetailTabs
+          obraId={obra.id}
+          startDate={obra.startDate.toISOString()}
+          theoreticalEndDate={obra.theoreticalEndDate.toISOString()}
+        />
     </div>
   );
 }
