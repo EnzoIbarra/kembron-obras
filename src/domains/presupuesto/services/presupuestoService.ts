@@ -198,6 +198,7 @@ export async function listTitulosWithItems(obraId: string): Promise<PresupuestoD
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         theoreticalAmount: item.theoreticalAmount,
+        origin: item.origin,
         real,
         executed,
       };

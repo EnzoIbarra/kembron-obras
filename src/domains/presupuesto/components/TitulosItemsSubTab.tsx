@@ -68,7 +68,12 @@ function TituloBlock({ titulo, obraId }: { titulo: TituloRowDto; obraId: string 
         titulo.items.map((item) => (
           <div key={item.id} className="border-b border-gray-100 last:border-b-0 md:grid md:grid-cols-[1fr_140px_140px_140px]">
             <div className="px-4 py-3">
-              <div className="text-sm font-medium text-gray-900">{item.name}</div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-medium text-gray-900">{item.name}</span>
+                {item.origin === 'ADICIONAL' && (
+                  <span className="shrink-0 rounded px-1.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700">AD</span>
+                )}
+              </div>
               <div className="text-xs text-gray-400 mt-0.5">
                 {Number(item.quantity).toLocaleString('es-AR')} {item.unit}
               </div>

@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma, ItemOrigin } from '@prisma/client';
 
 // Server-side types (Prisma.Decimal preserved)
 export type ItemRow = {
@@ -8,6 +8,7 @@ export type ItemRow = {
   quantity: Prisma.Decimal;
   unitPrice: Prisma.Decimal;
   theoreticalAmount: Prisma.Decimal;
+  origin: ItemOrigin;
   real: Prisma.Decimal;
   executed: Prisma.Decimal;
 };
@@ -33,6 +34,7 @@ export type ItemRowDto = {
   quantity: string;
   unitPrice: string;
   theoreticalAmount: string;
+  origin: 'PRESUPUESTO_INICIAL' | 'ADICIONAL';
   real: string;
   executed: string;
 };
