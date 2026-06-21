@@ -50,7 +50,23 @@ export const additionWithNewItemFormSchema = additionWithNewItemBodySchema.exten
   tituloId: z.string().min(1, 'Seleccioná un título'),
 });
 
+// ── Gasto schemas ─────────────────────────────────────────────────────────────
+
+// API route body for POST /api/items/[id]/gastos
+export const gastoBodySchema = z.object({
+  description: z.string().min(1, 'La descripción es requerida').max(500),
+  category: z.enum(['MANO_DE_OBRA', 'MATERIAL', 'EQUIPO', 'SUBCONTRATO', 'OTROS']),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida (YYYY-MM-DD)'),
+  amount: positiveDecimalString('El monto'),
+});
+
+// Form schema (extends body schema with the item selector)
+export const gastoFormSchema = gastoBodySchema.extend({
+  itemId: z.string().min(1, 'Seleccioná un ítem'),
+});
+
 export type TituloFormValues = z.infer<typeof tituloSchema>;
 export type ItemFormValues = z.infer<typeof itemSchema>;
 export type ItemChangeOrderFormValues = z.infer<typeof itemChangeOrderFormSchema>;
 export type AdditionWithNewItemFormValues = z.infer<typeof additionWithNewItemFormSchema>;
+export type GastoFormValues = z.infer<typeof gastoFormSchema>;

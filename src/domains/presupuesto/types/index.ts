@@ -67,3 +67,19 @@ export type ChangeOrderRowDto = {
   };
   usuario: { id: string; username: string };
 };
+
+// ── Gasto DTO ─────────────────────────────────────────────────────────────────
+export type GastoRowDto = {
+  id: string;
+  description: string;
+  category: 'MANO_DE_OBRA' | 'MATERIAL' | 'EQUIPO' | 'SUBCONTRATO' | 'OTROS';
+  date: string; // Date → ISO string
+  amount: string; // Decimal → string
+  createdAt: string;
+  item: {
+    id: string;
+    name: string;
+    titulo: { id: string; name: string };
+  };
+  usuario: { id: string; username: string };
+};
