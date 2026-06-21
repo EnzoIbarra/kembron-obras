@@ -26,17 +26,16 @@ function AmountCells({
   theoretical: string; real: string; executed: string; bold?: boolean;
 }) {
   const cls = bold ? 'font-semibold' : 'font-medium';
+  // Outer wrapper holds md:hidden alone (no competing display class) to avoid
+  // the Tailwind v4 CSS ordering conflict between `grid` and `md:hidden`.
   return (
-    <>
-      <div className={`mt-2 grid grid-cols-3 gap-1 text-xs md:hidden ${cls}`}>
+    <div className="md:hidden">
+      <div className={`mt-2 grid grid-cols-3 gap-1 text-xs ${cls}`}>
         <div><div className="text-gray-400 mb-0.5 font-normal">Teórico</div><div className="text-gray-900">{formatCurrency(theoretical)}</div></div>
         <div><div className="text-gray-400 mb-0.5 font-normal">Real</div><div className="text-gray-900">{formatCurrency(real)}</div></div>
         <div><div className="text-gray-400 mb-0.5 font-normal">Ejecutado</div><div className="text-gray-900">{formatCurrency(executed)}</div></div>
       </div>
-      <div className={`hidden md:flex md:items-center md:justify-end text-sm px-4 text-gray-700 ${cls}`}>{formatCurrency(theoretical)}</div>
-      <div className={`hidden md:flex md:items-center md:justify-end text-sm px-4 text-gray-700 ${cls}`}>{formatCurrency(real)}</div>
-      <div className={`hidden md:flex md:items-center md:justify-end text-sm px-4 text-gray-700 ${cls}`}>{formatCurrency(executed)}</div>
-    </>
+    </div>
   );
 }
 
