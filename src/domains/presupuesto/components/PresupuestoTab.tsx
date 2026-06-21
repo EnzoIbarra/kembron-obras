@@ -3,6 +3,7 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import { TitulosItemsSubTab } from './TitulosItemsSubTab';
 import { AdicionalesDeductivosSubTab } from './AdicionalesDeductivosSubTab';
+import { GastosSubTab } from './GastosSubTab';
 
 type Props = { obraId: string };
 
@@ -39,7 +40,7 @@ export function PresupuestoTab({ obraId }: Props) {
       </Tabs.Content>
 
       <Tabs.Content value="gastos">
-        <p className="text-sm text-gray-400">Gastos — próximamente</p>
+        <GastosSubTab obraId={obraId} />
       </Tabs.Content>
     </Tabs.Root>
   );
