@@ -16,22 +16,13 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null;
 
-        // TEMP DIAGNOSTIC — remove once root cause confirmed
-        let usuario: Awaited<ReturnType<typeof prisma.usuario.findUnique>> = null;
-        try {
-          usuario = await prisma.usuario.findUnique({
-            where: { username: credentials.username },
-          });
-          console.log('[AUTH_DIAG] db query ok, user found:', !!usuario);
-        } catch (error) {
-          console.error('[AUTH_DB_ERROR]', error);
-          return null;
-        }
+        const usuario = await prisma.usuario.findUnique({
+          where: { username: credentials.username },
+        });
 
         if (!usuario) return null;
 
         const passwordMatch = await bcrypt.compare(credentials.password, usuario.password);
-        console.log('[AUTH_DIAG] bcrypt match:', passwordMatch);
         if (!passwordMatch) return null;
 
         return { id: usuario.id, name: usuario.username, role: usuario.role };
