@@ -14,6 +14,7 @@ import {
   type AdditionWithNewItemFormValues,
 } from '../types/schemas';
 import { formatCurrency } from '@/shared/utils/format';
+import { CONSTRUCTION_UNITS } from '../utils/units';
 import type { ChangeOrderRowDto, PresupuestoDataDto } from '../types';
 
 // ── Shared field styles ───────────────────────────────────────────────────────
@@ -147,7 +148,12 @@ function NewItemForm({
         </div>
         <div className="flex flex-col gap-1">
           <Label.Root htmlFor="ni-unit" className={labelCls}>Unidad</Label.Root>
-          <input id="ni-unit" {...register('unit')} placeholder="m², ml…" className={inputCls} />
+          <select id="ni-unit" {...register('unit')} className={inputCls}>
+            <option value="">Seleccioná…</option>
+            {CONSTRUCTION_UNITS.map((u) => (
+              <option key={u.value} value={u.value}>{u.label}</option>
+            ))}
+          </select>
           {errors.unit && <p className={errorCls}>{errors.unit.message}</p>}
         </div>
       </div>

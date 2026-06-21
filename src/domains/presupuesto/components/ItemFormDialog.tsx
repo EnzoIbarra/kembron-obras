@@ -6,6 +6,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as Label from '@radix-ui/react-label';
 import { itemSchema, type ItemFormValues } from '../types/schemas';
 import { useCreateItem } from '../hooks/usePresupuesto';
+import { CONSTRUCTION_UNITS } from '../utils/units';
 
 type Props = {
   obraId: string;
@@ -83,12 +84,16 @@ export function ItemFormDialog({ obraId, tituloId, tituloName, open, onOpenChang
                 <Label.Root htmlFor="item-unit" className="text-sm font-medium text-gray-700">
                   Unidad
                 </Label.Root>
-                <input
+                <select
                   id="item-unit"
                   {...register('unit')}
-                  placeholder="m², ml, kg…"
                   className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                />
+                >
+                  <option value="">Seleccioná…</option>
+                  {CONSTRUCTION_UNITS.map((u) => (
+                    <option key={u.value} value={u.value}>{u.label}</option>
+                  ))}
+                </select>
                 {errors.unit && <p className="text-xs text-red-500">{errors.unit.message}</p>}
               </div>
             </div>
