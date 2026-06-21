@@ -1,4 +1,4 @@
-import { Prisma, ChangeOrderType, ItemOrigin } from '@prisma/client';
+import { Prisma, ChangeOrderType, ItemOrigin, ExpenseCategory } from '@prisma/client';
 import { prisma } from '@/shared/lib/prisma';
 import { computeItemRealBudget, computeItemExecuted, sumBudgetColumns } from '../utils/budgetCalculations';
 import type { PresupuestoData } from '../types';
@@ -132,6 +132,39 @@ export async function listChangeOrders(obraId: string) {
       usuario: { select: { id: true, username: true } },
     },
     orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function createGasto(
+  userId: string,
+  data: { itemId: string; description: string; category: ExpenseCategory; date: string; amount: string }
+) {
+  return prisma.gasto.create({
+    data: {
+      itemId: data.itemId,
+      userId,
+      description: data.description,
+      category: data.category,
+      date: new Date(data.date),
+      amount: new Prisma.Decimal(data.amount),
+    },
+  });
+}
+
+export async function listGastos(obraId: string) {
+  return prisma.gasto.findMany({
+    where: { item: { titulo: { obraId } } },
+    include: {
+      item: {
+        select: {
+          id: true,
+          name: true,
+          titulo: { select: { id: true, name: true } },
+        },
+      },
+      usuario: { select: { id: true, username: true } },
+    },
+    orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
   });
 }
 
