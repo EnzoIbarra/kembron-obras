@@ -18,7 +18,8 @@ export type ItemAvanceDto = {
   id: string;
   name: string;
   unit: string;
-  theoreticalAmount: string;
+  quantity: string;         // physical total quantity — denominator for progress %
+  theoreticalAmount: string; // monetary amount — denominator for financial curve
   registros: RegistroDto[];
 };
 

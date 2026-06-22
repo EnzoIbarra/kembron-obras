@@ -1,7 +1,7 @@
 import type { ProgramacionCellDto } from '../types';
 
 type ActualRecord = { itemId: string; weekNumber: number; advancedQuantity: string };
-type ItemSpec = { id: string; theoreticalAmount: string };
+type ItemSpec = { id: string; quantity: string }; // physical quantity — denominator for progress %
 
 export type CurvaPoint = { weekNumber: number; cumulativePct: number };
 
@@ -67,10 +67,10 @@ export function buildActualCurve(
 
     let totalPct = 0;
     for (const item of items) {
-      const theoretical = Number(item.theoreticalAmount);
+      const qty = Number(item.quantity);
       const pct =
-        theoretical > 0
-          ? Math.min(100, (cumulativeByItem.get(item.id)! / theoretical) * 100)
+        qty > 0
+          ? Math.min(100, (cumulativeByItem.get(item.id)! / qty) * 100)
           : 0;
       totalPct += pct;
     }

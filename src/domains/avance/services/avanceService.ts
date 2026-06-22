@@ -59,6 +59,7 @@ export async function listAvanceReal(obraId: string): Promise<AvanceRealDto> {
           id: true,
           name: true,
           unit: true,
+          quantity: true,
           theoreticalAmount: true,
           progressRecords: {
             orderBy: { date: 'asc' },
@@ -82,6 +83,7 @@ export async function listAvanceReal(obraId: string): Promise<AvanceRealDto> {
         id: item.id,
         name: item.name,
         unit: item.unit,
+        quantity: item.quantity.toString(),
         theoreticalAmount: item.theoreticalAmount.toString(),
         registros: item.progressRecords.map((r) => ({
           id: r.id,

@@ -8,10 +8,10 @@ import type { ItemAvanceDto } from '../types';
 type Props = { obraId: string };
 
 function itemCumulativePct(item: ItemAvanceDto): number {
-  const theoretical = Number(item.theoreticalAmount);
-  if (theoretical === 0) return 0;
-  const total = item.registros.reduce((sum, r) => sum + Number(r.advancedQuantity), 0);
-  return Math.min(100, Math.round((total / theoretical) * 10000) / 100);
+  const totalQty = Number(item.quantity);
+  if (totalQty === 0) return 0;
+  const advanced = item.registros.reduce((sum, r) => sum + Number(r.advancedQuantity), 0);
+  return Math.min(100, Math.round((advanced / totalQty) * 10000) / 100);
 }
 
 type LogTarget = { itemId: string; itemName: string; unit: string };
