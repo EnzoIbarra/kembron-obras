@@ -10,7 +10,7 @@ type Props = { obraId: string; startDate: Date; theoreticalEndDate: Date };
 
 const stickyCol = 'sticky left-0 z-10 border-r border-gray-200';
 const inputCls =
-  'w-14 rounded border border-transparent bg-transparent px-1 py-1 text-center text-xs text-gray-900 ' +
+  'w-14 rounded border border-gray-200 bg-gray-50 px-1 py-1 text-center text-xs text-gray-900 ' +
   'focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400';
 
 export function ProgramacionSubTab({ obraId, startDate, theoreticalEndDate }: Props) {
