@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ProgramacionSubTab } from './ProgramacionSubTab';
+import { AvanceRealSubTab } from './AvanceRealSubTab';
 
 type Props = {
   obraId: string;
@@ -42,7 +43,7 @@ export function AvanceTab({ obraId, startDate, theoreticalEndDate }: Props) {
       </Tabs.Content>
 
       <Tabs.Content value="avance-real">
-        <p className="text-sm text-gray-400">Avance real — próximamente</p>
+        <AvanceRealSubTab obraId={obraId} />
       </Tabs.Content>
 
       <Tabs.Content value="gantt">
