@@ -37,6 +37,18 @@ export function buildPlannedCurve(
   return result;
 }
 
+// Per-item cumulative physical progress % capped at 100.
+// Structural type keeps this usable from both AvanceRealSubTab and GanttSubTab.
+export function itemCumulativePct(item: {
+  quantity: string;
+  registros: { advancedQuantity: string }[];
+}): number {
+  const totalQty = Number(item.quantity);
+  if (totalQty === 0) return 0;
+  const advanced = item.registros.reduce((sum, r) => sum + Number(r.advancedQuantity), 0);
+  return Math.min(100, Math.round((advanced / totalQty) * 10000) / 100);
+}
+
 // Physical progress curve — simple average of per-item cumulative % (each capped at 100).
 // records must be pre-mapped to weekNumber by the caller (date→week via semanas.ts).
 export function buildActualCurve(

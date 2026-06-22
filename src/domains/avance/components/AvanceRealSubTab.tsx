@@ -3,16 +3,9 @@
 import { useState, useMemo } from 'react';
 import { useAvanceReal } from '../hooks/useAvanceReal';
 import { LogProgressDialog } from './LogProgressDialog';
-import type { ItemAvanceDto } from '../types';
+import { itemCumulativePct } from '../utils/curvas';
 
 type Props = { obraId: string };
-
-function itemCumulativePct(item: ItemAvanceDto): number {
-  const totalQty = Number(item.quantity);
-  if (totalQty === 0) return 0;
-  const advanced = item.registros.reduce((sum, r) => sum + Number(r.advancedQuantity), 0);
-  return Math.min(100, Math.round((advanced / totalQty) * 10000) / 100);
-}
 
 type LogTarget = { itemId: string; itemName: string; unit: string };
 
