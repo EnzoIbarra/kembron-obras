@@ -10,3 +10,8 @@ export const programacionCellBodySchema = z.object({
   // null → delete the record (cell cleared); string → upsert
   plannedQuantity: positiveDecimal.nullable(),
 });
+
+export const registroAvanceBodySchema = z.object({
+  advancedQuantity: positiveDecimal,
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida'),
+});
