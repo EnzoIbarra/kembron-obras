@@ -17,4 +17,14 @@ export type ObraDto = Omit<
   updatedAt: string;
 };
 
+export type MisObraDto = {
+  id: string;
+  name: string;
+  status: string;
+  active: boolean;
+  startDate: string;
+  theoreticalEndDate: string;
+  physicalProgress: number;
+};
+
 export { ObraStatus };
