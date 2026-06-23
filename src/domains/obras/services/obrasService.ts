@@ -1,17 +1,79 @@
-import { ObraStatus } from '@prisma/client';
+import { ObraStatus, Prisma } from '@prisma/client';
 import { prisma } from '@/shared/lib/prisma';
+import {
+  computeItemRealBudget,
+  computeItemExecuted,
+} from '@/domains/presupuesto/utils/budgetCalculations';
 import type { ObraWithProgress, MisObraDto } from '../types';
+
+// Nested select reused by listObras and getObraById to compute progress metrics.
+const progressInclude = {
+  titulos: {
+    select: {
+      items: {
+        select: {
+          quantity: true,
+          theoreticalAmount: true,
+          createdByAdicionalId: true,
+          changeOrders: { select: { id: true, type: true, amount: true } },
+          expenses: { select: { amount: true } },
+          progressRecords: { select: { advancedQuantity: true } },
+        },
+      },
+    },
+  },
+} as const;
+
+type ItemProgressRow = {
+  quantity: Prisma.Decimal;
+  theoreticalAmount: Prisma.Decimal;
+  createdByAdicionalId: string | null;
+  changeOrders: { id: string; type: string; amount: Prisma.Decimal }[];
+  expenses: { amount: Prisma.Decimal }[];
+  progressRecords: { advancedQuantity: Prisma.Decimal }[];
+};
+
+function computeProgress(items: ItemProgressRow[]): {
+  physicalProgress: number;
+  economicProgress: number;
+} {
+  let physicalSum = 0;
+  let realBudgetAcc = new Prisma.Decimal(0);
+  let executedAcc = new Prisma.Decimal(0);
+
+  for (const item of items) {
+    const qty = Number(item.quantity);
+    const adv = item.progressRecords.reduce(
+      (s, r) => s + Number(r.advancedQuantity),
+      0,
+    );
+    physicalSum += qty === 0 ? 0 : Math.min(100, (adv / qty) * 100);
+    realBudgetAcc = realBudgetAcc.plus(
+      computeItemRealBudget(item.theoreticalAmount, item.changeOrders, item.createdByAdicionalId),
+    );
+    executedAcc = executedAcc.plus(computeItemExecuted(item.expenses));
+  }
+
+  const physicalProgress =
+    items.length === 0 ? 0 : Math.round((physicalSum / items.length) * 100) / 100;
+
+  const economicProgress = realBudgetAcc.lessThanOrEqualTo(0)
+    ? 0
+    : Math.round(executedAcc.div(realBudgetAcc).toNumber() * 10000) / 100;
+
+  return { physicalProgress, economicProgress };
+}
 
 export async function listObras(): Promise<ObraWithProgress[]> {
   const obras = await prisma.obra.findMany({
     orderBy: [{ active: 'desc' }, { createdAt: 'desc' }],
+    include: progressInclude,
   });
 
-  return obras.map((obra) => ({
-    ...obra,
-    physicalProgress: 0, // TODO: computed from Items + RegistroAvance (Bloque avance)
-    economicProgress: 0, // TODO: computed from Gastos ÷ Real budget (Bloque presupuesto)
-  }));
+  return obras.map(({ titulos, ...obra }) => {
+    const items = titulos.flatMap((t) => t.items);
+    return { ...obra, ...computeProgress(items) };
+  });
 }
 
 export async function createObra(data: {
@@ -40,13 +102,14 @@ export async function updateObra(
 }
 
 export async function getObraById(id: string): Promise<ObraWithProgress | null> {
-  const obra = await prisma.obra.findUnique({ where: { id } });
+  const obra = await prisma.obra.findUnique({
+    where: { id },
+    include: progressInclude,
+  });
   if (!obra) return null;
-  return {
-    ...obra,
-    physicalProgress: 0, // TODO: computed from Items + RegistroAvance (Bloque avance)
-    economicProgress: 0, // TODO: computed from Gastos ÷ Real budget (Bloque presupuesto)
-  };
+  const { titulos, ...rest } = obra;
+  const items = titulos.flatMap((t) => t.items);
+  return { ...rest, ...computeProgress(items) };
 }
 
 export async function toggleObraActive(id: string) {

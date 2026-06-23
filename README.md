@@ -72,7 +72,7 @@ Abrir [http://localhost:3000](http://localhost:3000). El login redirige automát
 | Supervisor | `supervisor1` | `Supervisor1!` |
 | Supervisor | `supervisor2` | `Supervisor2!` |
 
-`supervisor1` tiene obras asignadas en la base de datos. `supervisor2` no tiene asignaciones iniciales.
+`supervisor1` está asignado a Torre Cóndor Norte. `supervisor2` no tiene asignaciones iniciales.
 
 ---
 
@@ -92,7 +92,7 @@ Abrir [http://localhost:3000](http://localhost:3000). El login redirige automát
 
 ## Stack tecnológico
 
-- **Framework**: Next.js 16 (App Router, full-stack)
+- **Framework**: Next.js 15 (App Router, full-stack)
 - **Base de datos**: PostgreSQL en Supabase · Prisma ORM 5.22
 - **Autenticación**: NextAuth v4 (Credentials + JWT)
 - **UI**: Tailwind CSS v4 · Radix UI · Recharts v3
