@@ -49,6 +49,33 @@ export function itemCumulativePct(item: {
   return Math.min(100, Math.round((advanced / totalQty) * 10000) / 100);
 }
 
+// Financial actual curve — cumulative expenses as % of real budget.
+// Denominator guard: returns [] when totalReal ≤ 0 to avoid NaN/Infinity.
+export function buildActualFinancialCurve(
+  expenses: { weekNumber: number; amount: string }[],
+  totalReal: string,
+  totalWeeks: number,
+): CurvaPoint[] {
+  const total = Number(totalReal);
+  if (total <= 0) return [];
+
+  const weeklyTotals = new Map<number, number>();
+  for (const e of expenses) {
+    weeklyTotals.set(e.weekNumber, (weeklyTotals.get(e.weekNumber) ?? 0) + Number(e.amount));
+  }
+
+  const result: CurvaPoint[] = [];
+  let cumulative = 0;
+  for (let w = 1; w <= totalWeeks; w++) {
+    cumulative += weeklyTotals.get(w) ?? 0;
+    result.push({
+      weekNumber: w,
+      cumulativePct: Math.round((cumulative / total) * 10000) / 100,
+    });
+  }
+  return result;
+}
+
 // Physical progress curve — simple average of per-item cumulative % (each capped at 100).
 // records must be pre-mapped to weekNumber by the caller (date→week via semanas.ts).
 export function buildActualCurve(

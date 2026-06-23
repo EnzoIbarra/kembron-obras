@@ -56,3 +56,15 @@ export function getCurrentWeekNumber(
   if (todayNorm < start || todayNorm > end) return null;
   return Math.floor(diffDays(start, todayNorm) / 7) + 1;
 }
+
+/**
+ * Converts an absolute date to a 1-based week number relative to the obra's startDate.
+ * Clamps to [1, totalWeeks] so records outside the obra period are assigned to the
+ * nearest boundary week rather than dropped from the curve.
+ */
+export function dateToWeekNumber(startDate: Date, date: Date, totalWeeks: number): number {
+  const start = toUTCDay(startDate);
+  const d = toUTCDay(date);
+  const raw = Math.floor(diffDays(start, d) / 7) + 1;
+  return Math.max(1, Math.min(totalWeeks, raw));
+}
