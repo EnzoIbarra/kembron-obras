@@ -137,14 +137,14 @@ export function SupervisorObraView({ obraId }: { obraId: string }) {
         itemId={dialog?.type === 'avance' ? dialog.itemId : ''}
         itemName={dialog?.type === 'avance' ? dialog.itemName : ''}
         unit={dialog?.type === 'avance' ? dialog.unit : ''}
-        open={dialog?.type === 'avance' ?? false}
+        open={dialog?.type === 'avance'}
         onOpenChange={(open) => { if (!open) setDialog(null); }}
       />
       <SupervisorLogGastoDialog
         obraId={obraId}
         itemId={dialog?.type === 'gasto' ? dialog.itemId : ''}
         itemName={dialog?.type === 'gasto' ? dialog.itemName : ''}
-        open={dialog?.type === 'gasto' ?? false}
+        open={dialog?.type === 'gasto'}
         onOpenChange={(open) => { if (!open) setDialog(null); }}
       />
     </div>

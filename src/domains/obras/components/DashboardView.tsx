@@ -126,7 +126,7 @@ export function DashboardView() {
               tickFormatter={(v) => arsCompact.format(v)}
             />
             <Tooltip
-              formatter={(v: unknown, name: string) => [
+              formatter={(v: unknown, name: string | number | undefined) => [
                 arsFull.format(v as number),
                 name === 'presupuestado' ? 'Presupuestado' : 'Ejecutado',
               ]}

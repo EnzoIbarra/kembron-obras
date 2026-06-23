@@ -1,4 +1,4 @@
-import { ObraStatus, Prisma } from '@prisma/client';
+import { ObraStatus, Prisma, ChangeOrderType } from '@prisma/client';
 import { prisma } from '@/shared/lib/prisma';
 import {
   computeItemRealBudget,
@@ -28,7 +28,7 @@ type ItemProgressRow = {
   quantity: Prisma.Decimal;
   theoreticalAmount: Prisma.Decimal;
   createdByAdicionalId: string | null;
-  changeOrders: { id: string; type: string; amount: Prisma.Decimal }[];
+  changeOrders: { id: string; type: ChangeOrderType; amount: Prisma.Decimal }[];
   expenses: { amount: Prisma.Decimal }[];
   progressRecords: { advancedQuantity: Prisma.Decimal }[];
 };
