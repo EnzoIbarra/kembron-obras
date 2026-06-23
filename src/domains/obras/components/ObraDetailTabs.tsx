@@ -1,6 +1,7 @@
 'use client';
 
 import * as Tabs from '@radix-ui/react-tabs';
+import { ResumenTab } from './ResumenTab';
 import { PresupuestoTab } from '@/domains/presupuesto/components/PresupuestoTab';
 import { AvanceTab } from '@/domains/avance/components/AvanceTab';
 
@@ -32,7 +33,7 @@ export function ObraDetailTabs({ obraId, startDate, theoreticalEndDate }: Props)
       </Tabs.List>
 
       <Tabs.Content value="resumen" className="pt-6">
-        <p className="text-sm text-gray-400">Resumen — próximamente</p>
+        <ResumenTab obraId={obraId} startDate={startDate} theoreticalEndDate={theoreticalEndDate} />
       </Tabs.Content>
 
       <Tabs.Content value="presupuesto" className="pt-6">
