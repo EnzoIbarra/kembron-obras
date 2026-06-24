@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { AvanceRealDto } from '../types';
 
 export function useAvanceReal(obraId: string) {
@@ -38,6 +39,8 @@ export function useCreateRegistroAvance(obraId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['avance-real', obraId] });
+      toast.success('Avance registrado');
     },
+    onError: (err: Error) => toast.error(err.message),
   });
 }

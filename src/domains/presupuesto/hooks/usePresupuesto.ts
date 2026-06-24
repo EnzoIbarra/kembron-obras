@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { PresupuestoDataDto } from '../types';
 import type { TituloFormValues, ItemFormValues } from '../types/schemas';
 
@@ -32,7 +33,11 @@ export function useCreateTitulo(obraId: string) {
       }
       return res.json();
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: presupuestoKey(obraId) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: presupuestoKey(obraId) });
+      toast.success('Título creado');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -51,6 +56,10 @@ export function useCreateItem(obraId: string, tituloId: string) {
       }
       return res.json();
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: presupuestoKey(obraId) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: presupuestoKey(obraId) });
+      toast.success('Ítem creado');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }

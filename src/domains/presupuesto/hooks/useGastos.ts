@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { GastoRowDto } from '../types';
 import type { GastoFormValues } from '../types/schemas';
 
@@ -36,9 +37,10 @@ export function useCreateGasto(obraId: string) {
       return res.json();
     },
     onSuccess: () => {
-      // Invalidate budget table so Ejecutado column updates immediately
       qc.invalidateQueries({ queryKey: ['presupuesto', obraId] });
       qc.invalidateQueries({ queryKey: gastosKey(obraId) });
+      toast.success('Gasto registrado');
     },
+    onError: (err: Error) => toast.error(err.message),
   });
 }

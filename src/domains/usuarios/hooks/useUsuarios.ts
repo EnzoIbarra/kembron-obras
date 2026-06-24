@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { UsuarioDto } from '../types';
 import type { CreateUsuarioValues, UpdateUsuarioValues } from '../types/schemas';
 
@@ -31,7 +32,11 @@ export function useCreateUsuario() {
         throw new Error(body.error ?? 'Error al crear usuario');
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY });
+      toast.success('Usuario creado');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -49,7 +54,11 @@ export function useUpdateUsuario() {
         throw new Error(body.error ?? 'Error al actualizar usuario');
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY });
+      toast.success('Usuario actualizado');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -63,7 +72,11 @@ export function useDeleteUsuario() {
         throw new Error(body.error ?? 'Error al eliminar usuario');
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY });
+      toast.success('Usuario eliminado');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -81,6 +94,10 @@ export function useReplaceAsignaciones() {
         throw new Error(body.error ?? 'Error al guardar asignaciones');
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY });
+      toast.success('Asignaciones guardadas');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }

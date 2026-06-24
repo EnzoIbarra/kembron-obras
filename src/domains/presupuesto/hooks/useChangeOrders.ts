@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { ChangeOrderRowDto } from '../types';
 import type { ItemChangeOrderFormValues, AdditionWithNewItemFormValues } from '../types/schemas';
 
@@ -46,7 +47,11 @@ export function useCreateItemChangeOrder(obraId: string) {
       }
       return res.json();
     },
-    onSuccess: () => invalidateBoth(qc, obraId),
+    onSuccess: (_, variables) => {
+      invalidateBoth(qc, obraId);
+      toast.success(variables.type === 'ADICIONAL' ? 'Adicional creado' : 'Deductivo creado');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -68,6 +73,10 @@ export function useCreateAdditionWithNewItem(obraId: string) {
       }
       return res.json();
     },
-    onSuccess: () => invalidateBoth(qc, obraId),
+    onSuccess: () => {
+      invalidateBoth(qc, obraId);
+      toast.success('Adicional creado');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }

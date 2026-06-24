@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { ObraDto } from '../types';
 import type { ObraFormValues } from '../types/schemas';
 
@@ -29,7 +30,11 @@ export function useCreateObra() {
       }
       return res.json() as Promise<ObraDto>;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: OBRAS_KEY }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: OBRAS_KEY });
+      toast.success('Obra creada');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -48,7 +53,11 @@ export function useUpdateObra() {
       }
       return res.json() as Promise<ObraDto>;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: OBRAS_KEY }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: OBRAS_KEY });
+      toast.success('Obra actualizada');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
 
@@ -63,6 +72,10 @@ export function useToggleObraActive() {
       }
       return res.json() as Promise<ObraDto>;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: OBRAS_KEY }),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: OBRAS_KEY });
+      toast.success(data.active ? 'Obra reactivada' : 'Obra desactivada');
+    },
+    onError: (err: Error) => toast.error(err.message),
   });
 }
