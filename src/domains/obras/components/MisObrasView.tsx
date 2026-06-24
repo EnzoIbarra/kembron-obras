@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMisObras } from '../hooks/useMisObras';
+import { formatDate } from '../utils/obraFormatting';
 
 const STATUS_LABEL: Record<string, string> = {
   EN_EJECUCION: 'En ejecución',
@@ -53,7 +54,12 @@ export function MisObrasView() {
           className="block rounded-xl border border-gray-200 bg-white p-4 hover:border-blue-300 hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between gap-2 mb-3">
-            <p className="font-semibold text-gray-900">{obra.name}</p>
+            <div>
+              <p className="font-semibold text-gray-900">{obra.name}</p>
+              <p className="mt-0.5 text-xs text-gray-400">
+                {formatDate(obra.startDate)} – {formatDate(obra.theoreticalEndDate)}
+              </p>
+            </div>
             <span
               className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
                 STATUS_COLOR[obra.status] ?? 'bg-gray-100 text-gray-600'
