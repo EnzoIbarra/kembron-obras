@@ -1,6 +1,6 @@
 export default function SupervisorLoading() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-4">
       <div className="h-7 w-40 animate-pulse rounded-lg bg-gray-200" />
       <div className="overflow-hidden rounded-xl border border-gray-200">
         <div className="h-11 animate-pulse border-b border-gray-100 bg-gray-50" />
