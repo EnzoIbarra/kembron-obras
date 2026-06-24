@@ -13,9 +13,15 @@ type Props = {
   isToggling?: boolean;
 };
 
+const STATUS_BORDER: Record<ObraStatus, string> = {
+  EN_EJECUCION: 'border-l-green-500',
+  PAUSADA: 'border-l-amber-500',
+  FINALIZADA: 'border-l-gray-400',
+};
+
 function ProgressBar({ value, color }: { value: number; color: string }) {
   return (
-    <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+    <div className="h-2.5 w-full rounded-full bg-gray-100 overflow-hidden">
       <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${value}%` }} />
     </div>
   );
@@ -31,8 +37,9 @@ export function ObraCard({ obra, onEdit, onToggleActive, isToggling }: Props) {
       tabIndex={0}
       onClick={() => router.push(`/obras/${obra.id}`)}
       onKeyDown={(e) => e.key === 'Enter' && router.push(`/obras/${obra.id}`)}
-      className={`relative rounded-xl border bg-white p-5 shadow-sm flex flex-col gap-4 cursor-pointer
-        hover:border-blue-300 hover:shadow-md transition-all outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+      className={`relative rounded-xl border border-l-4 bg-white p-5 shadow-sm flex flex-col gap-4 cursor-pointer
+        hover:shadow-md transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+        ${STATUS_BORDER[obra.status as ObraStatus]}
         ${inactive ? 'opacity-60' : ''}`}
     >
       {inactive && (
@@ -44,7 +51,7 @@ export function ObraCard({ obra, onEdit, onToggleActive, isToggling }: Props) {
       {/* Header */}
       <div className="pr-16">
         <h3 className="text-base font-semibold text-gray-900 leading-tight">{obra.name}</h3>
-        <p className="text-sm text-gray-500 mt-0.5">{obra.client}</p>
+        <p className="text-sm font-medium text-gray-700 mt-0.5">{obra.client}</p>
         <p className="text-xs text-gray-400 mt-0.5">{obra.location}</p>
       </div>
 
@@ -63,16 +70,16 @@ export function ObraCard({ obra, onEdit, onToggleActive, isToggling }: Props) {
       {/* Progress */}
       <div className="flex flex-col gap-2">
         <div>
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Avance físico</span>
-            <span>{obra.physicalProgress}%</span>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-gray-500">Avance físico</span>
+            <span className="font-semibold text-gray-700">{obra.physicalProgress}%</span>
           </div>
           <ProgressBar value={obra.physicalProgress} color="bg-blue-500" />
         </div>
         <div>
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Avance económico</span>
-            <span>{obra.economicProgress}%</span>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-gray-500">Avance económico</span>
+            <span className="font-semibold text-gray-700">{obra.economicProgress}%</span>
           </div>
           <ProgressBar value={obra.economicProgress} color="bg-emerald-500" />
         </div>
