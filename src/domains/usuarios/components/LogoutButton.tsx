@@ -1,12 +1,14 @@
 'use client';
 
 import { signOut } from 'next-auth/react';
+import { toast } from 'sonner';
 
 export function LogoutButton() {
   function handleLogout() {
-    if (window.confirm('¿Cerrar sesión?')) {
-      signOut({ callbackUrl: '/login' });
-    }
+    toast('¿Cerrar sesión?', {
+      action: { label: 'Confirmar', onClick: () => signOut({ callbackUrl: '/login' }) },
+      cancel: { label: 'Cancelar', onClick: () => {} },
+    });
   }
   return (
     <button

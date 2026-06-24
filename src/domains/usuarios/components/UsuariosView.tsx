@@ -7,6 +7,7 @@ import { UsuarioFormDialog } from './UsuarioFormDialog';
 import { AsignacionesDialog } from './AsignacionesDialog';
 import type { UsuarioDto } from '../types';
 import { Button } from '@/shared/components/ui/Button';
+import { toast } from 'sonner';
 
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: 'Administrador',
@@ -29,9 +30,12 @@ export function UsuariosView() {
   const deleteMutation = useDeleteUsuario();
   const [dialog, setDialog] = useState<DialogState | null>(null);
 
-  async function handleDelete(usuario: UsuarioDto) {
-    if (!window.confirm(`¿Eliminar al usuario "${usuario.username}"? Esta acción no se puede deshacer.`)) return;
-    await deleteMutation.mutateAsync(usuario.id);
+  function handleDelete(usuario: UsuarioDto) {
+    toast(`¿Eliminar a "${usuario.username}"?`, {
+      description: 'Esta acción no se puede deshacer.',
+      action: { label: 'Eliminar', onClick: () => deleteMutation.mutate(usuario.id) },
+      cancel: { label: 'Cancelar', onClick: () => {} },
+    });
   }
 
   if (isLoading) {

@@ -34,7 +34,7 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-sm px-4">
-      <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
+      <div className="overflow-hidden rounded-2xl border border-white/20 bg-white shadow-xl">
         <div className="bg-slate-900 px-8 py-8 text-center">
           <DraftingCompass size={36} className="mx-auto mb-3 text-blue-400" />
           <h1 className="text-2xl font-bold text-white">Kembron Obras</h1>

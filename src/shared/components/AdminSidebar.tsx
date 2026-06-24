@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
+import { toast } from 'sonner';
 import { DraftingCompass, LayoutDashboard, Building2, Users, LogOut } from 'lucide-react';
 
 const NAV_LINKS = [
@@ -15,9 +16,10 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   function handleLogout() {
-    if (window.confirm('¿Cerrar sesión?')) {
-      signOut({ callbackUrl: '/login' });
-    }
+    toast('¿Cerrar sesión?', {
+      action: { label: 'Confirmar', onClick: () => signOut({ callbackUrl: '/login' }) },
+      cancel: { label: 'Cancelar', onClick: () => {} },
+    });
   }
 
   return (
@@ -55,12 +57,12 @@ export function AdminSidebar() {
           onClick={handleLogout}
           className="group relative flex w-full items-center gap-3 overflow-hidden rounded-lg px-3 py-2.5"
         >
-          <span className="absolute inset-0 origin-center scale-x-0 rounded-lg bg-gradient-to-r from-red-900/50 to-red-800/30 transition-transform duration-500 ease-out group-hover:scale-x-100" />
+          <span className="absolute inset-0 origin-center scale-x-0 rounded-lg bg-gradient-to-r from-blue-400/10 via-blue-500/20 to-blue-600/30 transition-transform duration-500 ease-out group-hover:scale-x-100" />
           <LogOut
             size={16}
-            className="relative z-10 shrink-0 text-slate-400 transition-colors duration-200 group-hover:text-red-400"
+            className="relative z-10 shrink-0 text-slate-400 transition-colors duration-200 group-hover:text-blue-400"
           />
-          <span className="relative z-10 text-sm font-medium text-slate-400 transition-colors duration-200 group-hover:text-red-400">
+          <span className="relative z-10 text-sm font-medium text-slate-400 transition-colors duration-200 group-hover:text-blue-400">
             Cerrar sesión
           </span>
         </button>
