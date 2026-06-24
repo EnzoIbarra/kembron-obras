@@ -16,6 +16,7 @@ import {
 import { formatCurrency } from '@/shared/utils/format';
 import { CONSTRUCTION_UNITS } from '../utils/units';
 import type { ChangeOrderRowDto, PresupuestoDataDto } from '../types';
+import { Button } from '@/shared/components/ui/Button';
 
 // ── Shared field styles ───────────────────────────────────────────────────────
 const inputCls = 'rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full';
@@ -316,12 +317,7 @@ export function AdicionalesDeductivosSubTab({ obraId }: { obraId: string }) {
         <p className="text-sm text-gray-500">
           {changeOrders?.length ?? 0} registro{changeOrders?.length !== 1 ? 's' : ''}
         </p>
-        <button
-          onClick={() => setDialogOpen(true)}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-        >
-          + Nuevo
-        </button>
+        <Button onClick={() => setDialogOpen(true)}>+ Nuevo</Button>
       </div>
 
       {isLoading && (

@@ -48,8 +48,22 @@ export function GanttSubTab({ obraId, startDate, theoreticalEndDate }: Props) {
 
   if (loadingAvance || loadingProg) {
     return (
-      <div className="flex flex-col gap-2">
-        {[1, 2, 3].map((n) => <div key={n} className="h-10 animate-pulse rounded-lg bg-gray-100" />)}
+      <div className="overflow-x-auto rounded-xl border border-gray-200">
+        <div className="flex h-10 items-center gap-3 border-b border-gray-100 bg-gray-50 px-4">
+          <div className="h-3 w-32 animate-pulse rounded bg-gray-200" />
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="h-3 w-7 animate-pulse rounded bg-gray-200" />
+          ))}
+        </div>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <div key={n} className="flex h-10 items-center gap-3 border-b border-gray-100 px-4 last:border-b-0">
+            <div className="h-3 w-36 animate-pulse rounded bg-gray-100" />
+            <div
+              className="h-5 animate-pulse rounded-md bg-gray-100"
+              style={{ width: `${48 + n * 16}px`, marginLeft: `${(n - 1) * 28}px` }}
+            />
+          </div>
+        ))}
       </div>
     );
   }

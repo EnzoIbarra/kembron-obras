@@ -6,6 +6,7 @@ import { useUsuarios, useDeleteUsuario } from '../hooks/useUsuarios';
 import { UsuarioFormDialog } from './UsuarioFormDialog';
 import { AsignacionesDialog } from './AsignacionesDialog';
 import type { UsuarioDto } from '../types';
+import { Button } from '@/shared/components/ui/Button';
 
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: 'Administrador',
@@ -35,10 +36,29 @@ export function UsuariosView() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-3">
-        {[1, 2, 3].map((n) => (
-          <div key={n} className="h-14 animate-pulse rounded-xl bg-gray-100" />
-        ))}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div className="h-4 w-24 animate-pulse rounded bg-gray-100" />
+          <div className="h-8 w-32 animate-pulse rounded-lg bg-gray-200" />
+        </div>
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div className="grid grid-cols-4 gap-4 border-b border-gray-100 bg-gray-50 px-4 py-3">
+            {[16, 12, 24, 16].map((w, i) => (
+              <div key={i} className={`h-2.5 w-${w} animate-pulse rounded bg-gray-200`} />
+            ))}
+          </div>
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="grid grid-cols-4 items-center gap-4 border-b border-gray-100 px-4 py-3 last:border-b-0">
+              <div className="h-3 w-24 animate-pulse rounded bg-gray-100" />
+              <div className="h-5 w-20 animate-pulse rounded-full bg-gray-100" />
+              <div className="h-3 w-32 animate-pulse rounded bg-gray-100" />
+              <div className="flex justify-end gap-2">
+                <div className="h-6 w-12 animate-pulse rounded-lg bg-gray-100" />
+                <div className="h-6 w-16 animate-pulse rounded-lg bg-gray-100" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -55,12 +75,7 @@ export function UsuariosView() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500">{usuarios?.length ?? 0} usuario{usuarios?.length !== 1 ? 's' : ''}</p>
-        <button
-          onClick={() => setDialog({ type: 'create' })}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-        >
-          + Nuevo usuario
-        </button>
+        <Button onClick={() => setDialog({ type: 'create' })}>+ Nuevo usuario</Button>
       </div>
 
       {/* Table — scrollable on mobile */}

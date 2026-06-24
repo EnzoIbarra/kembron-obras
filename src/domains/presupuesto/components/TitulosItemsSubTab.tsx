@@ -7,6 +7,7 @@ import { ItemFormDialog } from './ItemFormDialog';
 import { formatCurrency } from '@/shared/utils/format';
 import type { TituloRowDto } from '../types';
 import { Card } from '@/shared/components/ui/Card';
+import { Button } from '@/shared/components/ui/Button';
 
 type Props = { obraId: string };
 
@@ -121,12 +122,7 @@ export function TitulosItemsSubTab({ obraId }: Props) {
     <>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-gray-500">{data?.titulos.length ?? 0} título{data?.titulos.length !== 1 ? 's' : ''}</p>
-        <button
-          onClick={() => setTituloDialogOpen(true)}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-        >
-          + Nuevo título
-        </button>
+        <Button onClick={() => setTituloDialogOpen(true)}>+ Nuevo título</Button>
       </div>
 
       {data?.titulos.length === 0 && (
