@@ -31,7 +31,7 @@ export default function RootLayout({
         <Toaster
           richColors
           position="bottom-right"
-          toastOptions={{ style: { minWidth: '280px', maxWidth: '360px' } }}
+          toastOptions={{ style: { minWidth: '280px', maxWidth: '360px', borderLeft: '4px solid #3b82f6' } }}
         />
         <Suspense fallback={null}>
           <NavigationProgress />
