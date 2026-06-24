@@ -13,6 +13,7 @@ import {
   itemCumulativePct,
 } from '@/domains/avance/utils/curvas';
 import { SCurveChart } from './SCurveChart';
+import { Card } from '@/shared/components/ui/Card';
 
 type Props = { obraId: string; startDate: string; theoreticalEndDate: string };
 
@@ -150,8 +151,8 @@ export function ResumenTab({ obraId, startDate, theoreticalEndDate }: Props) {
 
       {/* ── Progress by título ── */}
       {tituloPcts.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
-          <p className="mb-3 text-sm font-semibold text-gray-700">Avance por título</p>
+        <Card className="p-4">
+          <p className="mb-3 text-sm font-semibold text-gray-900">Avance por título</p>
           <div className="flex flex-col gap-2">
             {tituloPcts.map((t) => (
               <div key={t.id} className="flex items-center gap-3">
@@ -166,7 +167,7 @@ export function ResumenTab({ obraId, startDate, theoreticalEndDate }: Props) {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* ── S-curves ── */}
@@ -188,9 +189,9 @@ export function ResumenTab({ obraId, startDate, theoreticalEndDate }: Props) {
 
 function KpiCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl border border-gray-200 bg-white p-4">
-      <span className="text-xs text-gray-500">{label}</span>
+    <Card className="flex flex-col gap-1 p-4">
+      <span className="text-xs uppercase tracking-wide text-gray-500">{label}</span>
       <span className="text-2xl font-bold text-gray-900">{value}</span>
-    </div>
+    </Card>
   );
 }

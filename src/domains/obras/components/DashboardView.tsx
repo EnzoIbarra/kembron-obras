@@ -12,6 +12,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useDashboard } from '../hooks/useDashboard';
+import { Card } from '@/shared/components/ui/Card';
 
 const arsCompact = new Intl.NumberFormat('es-AR', {
   style: 'currency',
@@ -81,8 +82,8 @@ export function DashboardView() {
       </div>
 
       {/* ── Chart 1: physical progress per obra ── */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
-        <p className="mb-4 text-sm font-semibold text-gray-700">Avance físico por obra</p>
+      <Card className="p-4">
+        <p className="mb-4 text-sm font-semibold text-gray-900">Avance físico por obra</p>
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={progressData} margin={{ top: 4, right: 16, bottom: 24, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
@@ -104,11 +105,11 @@ export function DashboardView() {
           </BarChart>
         </ResponsiveContainer>
         <p className="mt-1 text-xs text-gray-400">Las obras desactivadas se muestran con menor opacidad.</p>
-      </div>
+      </Card>
 
       {/* ── Chart 2: presupuestado vs ejecutado ── */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
-        <p className="mb-4 text-sm font-semibold text-gray-700">Presupuestado vs ejecutado por obra</p>
+      <Card className="p-4">
+        <p className="mb-4 text-sm font-semibold text-gray-900">Presupuestado vs ejecutado por obra</p>
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={budgetData} margin={{ top: 4, right: 16, bottom: 24, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
@@ -144,16 +145,16 @@ export function DashboardView() {
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
     </div>
   );
 }
 
 function KpiCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl border border-gray-200 bg-white p-4">
-      <span className="text-xs text-gray-500">{label}</span>
+    <Card className="flex flex-col gap-1 p-4">
+      <span className="text-xs uppercase tracking-wide text-gray-500">{label}</span>
       <span className="text-2xl font-bold text-gray-900">{value}</span>
-    </div>
+    </Card>
   );
 }

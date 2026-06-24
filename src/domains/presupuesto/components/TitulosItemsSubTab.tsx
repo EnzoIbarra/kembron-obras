@@ -6,6 +6,7 @@ import { TituloFormDialog } from './TituloFormDialog';
 import { ItemFormDialog } from './ItemFormDialog';
 import { formatCurrency } from '@/shared/utils/format';
 import type { TituloRowDto } from '../types';
+import { Card } from '@/shared/components/ui/Card';
 
 type Props = { obraId: string };
 
@@ -43,7 +44,7 @@ function TituloBlock({ titulo, obraId }: { titulo: TituloRowDto; obraId: string 
   const [itemDialogOpen, setItemDialogOpen] = useState(false);
 
   return (
-    <div className="rounded-xl border border-gray-200 overflow-hidden">
+    <Card className="overflow-hidden">
       <div className="flex items-center justify-between gap-2 bg-gray-50 px-4 py-3 border-b border-gray-200">
         <span className="text-sm font-semibold text-gray-800">{titulo.name}</span>
         <button
@@ -96,7 +97,7 @@ function TituloBlock({ titulo, obraId }: { titulo: TituloRowDto; obraId: string 
       </div>
 
       <ItemFormDialog obraId={obraId} tituloId={titulo.id} tituloName={titulo.name} open={itemDialogOpen} onOpenChange={setItemDialogOpen} />
-    </div>
+    </Card>
   );
 }
 
